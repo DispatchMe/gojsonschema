@@ -48,7 +48,6 @@ type (
 		Value() interface{}
 		SetDetails(ErrorDetails)
 		Details() ErrorDetails
-		String() string
 	}
 
 	// ResultErrorFields holds the fields for each ResultError implementation.
@@ -155,8 +154,8 @@ func (v *Result) Errors() []ResultError {
 	return v.errors
 }
 
-func (v *Result) addError(err ResultError, context *jsonContext, value interface{}, details ErrorDetails) {
-	newError(err, context, value, Locale, details)
+func (v *Result) addError(err ResultError, context *jsonContext, currentSubSchema *subSchema, value interface{}, details ErrorDetails) {
+	newError(err, context, currentSubSchema, value, Locale, details)
 	v.errors = append(v.errors, err)
 	v.score -= 2 // results in a net -1 when added to the +1 we get at the end of the validation function
 }

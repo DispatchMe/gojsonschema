@@ -29,10 +29,9 @@ package gojsonschema
 import (
 	//	"encoding/json"
 	"errors"
+	"github.com/xeipuuv/gojsonreference"
 	"reflect"
 	"regexp"
-
-	"github.com/xeipuuv/gojsonreference"
 )
 
 var (
@@ -100,7 +99,6 @@ func (d *Schema) SetRootSchemaName(name string) {
 // then the values are copied into subSchema struct
 //
 func (d *Schema) parseSchema(documentNode interface{}, currentSchema *subSchema) error {
-
 	if !isKind(documentNode, reflect.Map) {
 		return errors.New(formatErrorDescription(
 			Locale.InvalidType(),
@@ -567,7 +565,7 @@ func (d *Schema) parseSchema(documentNode interface{}, currentSchema *subSchema)
 			if err != nil {
 				return errors.New(formatErrorDescription(
 					Locale.MustBeValidRegex(),
-					ErrorDetails{"key": KEY_PATTERN},
+					ErrorDetails{"key": KEY_PATTERN, "regex": m[KEY_PATTERN].(string)},
 				))
 			}
 			currentSchema.pattern = regexpObject
@@ -794,6 +792,26 @@ func (d *Schema) parseSchema(documentNode interface{}, currentSchema *subSchema)
 				Locale.MustBeOfAn(),
 				ErrorDetails{"x": KEY_NOT, "y": TYPE_OBJECT},
 			))
+		}
+	}
+
+	// Custom messages
+	if existsMapKey(m, KEY_MESSAGES) {
+		if isKind(m[KEY_MESSAGES], reflect.Map) {
+			// Parse it into map[string]string and set the messages
+			messages := make(map[string]string)
+			mp := m[KEY_MESSAGES].(map[string]interface{})
+
+			for k, v := range mp {
+				if vstr, ok := v.(string); ok {
+					messages[k] = vstr
+				}
+			}
+			currentSchema.messages = messages
+		} else {
+			return errors.New(formatErrorDescription(Locale.MustBeOfAn(), ErrorDetails{
+				"x": KEY_MESSAGES, "y": TYPE_OBJECT,
+			}))
 		}
 	}
 

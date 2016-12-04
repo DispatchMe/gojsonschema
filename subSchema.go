@@ -68,6 +68,7 @@ const (
 	KEY_ANY_OF                = "anyOf"
 	KEY_ALL_OF                = "allOf"
 	KEY_NOT                   = "not"
+	KEY_MESSAGES              = "messages"
 )
 
 type subSchema struct {
@@ -134,6 +135,9 @@ type subSchema struct {
 	anyOf []*subSchema
 	allOf []*subSchema
 	not   *subSchema
+
+	// custom error messages
+	messages map[string]string
 }
 
 func (s *subSchema) AddEnum(i interface{}) error {

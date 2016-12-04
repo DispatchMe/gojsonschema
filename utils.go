@@ -34,12 +34,7 @@ import (
 )
 
 func isKind(what interface{}, kind reflect.Kind) bool {
-	target := what
-	if isJsonNumber(what) {
-		// JSON Numbers are strings!
-		target = *mustBeNumber(what)
-	}
-	return reflect.ValueOf(target).Kind() == kind
+	return reflect.ValueOf(what).Kind() == kind
 }
 
 func existsMapKey(m map[string]interface{}, k string) bool {
