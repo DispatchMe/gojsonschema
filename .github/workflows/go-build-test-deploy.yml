@@ -9,3 +9,5 @@ jobs:
   go_build_and_deploy:
     uses: DispatchMe/github-actions/.github/workflows/go-build-test-deploy.yml@master
     secrets: inherit
+    with:
+      skipDeploy: "true"
